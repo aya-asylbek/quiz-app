@@ -1,5 +1,5 @@
-// client/src/GameSetup.jsx
 import { useRef } from 'react';
+import he from 'he';
 
 export default function GameSetup({ startGame }) {
   const formRef = useRef();
@@ -7,15 +7,32 @@ export default function GameSetup({ startGame }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(formRef.current);
-    startGame(Object.fromEntries(formData));
+    const settings = {
+      amount: formData.get('amount'),
+      category: formData.get('category'),
+      difficulty: formData.get('difficulty'),
+      type: formData.get('type')
+    };
+    startGame(settings);
   };
 
   return (
     <form ref={formRef} onSubmit={handleSubmit}>
       <label>
-        Questions:
-        <input name="amount" type="number" min="1" defaultValue="5" required />
+        Number of Questions:
+        <input name="amount" type="number" min="1" max="50" defaultValue="10" />
       </label>
+      
+      <label>
+        Category:
+        <select name="category">
+          <option value="">Any</option>
+          <option value="9">General Knowledge</option>
+          <option value="18">Computers</option>
+          {/* Add more categories */}
+        </select>
+      </label>
+
       <button type="submit">Start Quiz</button>
     </form>
   );

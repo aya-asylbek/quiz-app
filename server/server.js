@@ -1,19 +1,31 @@
 import express from 'express';
 import cors from 'cors';
-import fakeData from './fakedata.js';
+import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
+dotenv.config();
 const app = express();
 app.use(cors());
 
-// Add root route
-app.get('/', (req, res) => {
-    res.send('Trivia API Server is running!');
+app.get('/api/questions', async (req, res) => {
+  try {
+    const { amount, category, difficulty, type } = req.query;
+    const apiUrl = new URL('https://opentdb.com/api.php');
+    
+    apiUrl.searchParams.append('amount', amount || 10);
+    if (category) apiUrl.searchParams.append('category', category);
+    if (difficulty) apiUrl.searchParams.append('difficulty', difficulty);
+    if (type) apiUrl.searchParams.append('type', type);
+
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    
+    res.json(data);
+  } catch (error) {
+    console.error('API Error:', error);
+    res.status(500).json({ error: 'Failed to fetch questions' });
+  }
 });
 
-// API endpoint
-app.get('/api/questions', (req, res) => {
-    res.json(fakeData); // Send the fakeData object directly
-});
-
-
-app.listen(5000, () => console.log('Server running on port 5000'));
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
