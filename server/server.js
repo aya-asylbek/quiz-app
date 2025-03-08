@@ -1,12 +1,19 @@
-import express from 'express'
-import cors from 'cors'
-import dotenv from 'dotenv'
+import express from 'express';
+import cors from 'cors';
+import fakeData from './fakedata.js';
 
-dotenv.config()
-const app = express()
+const app = express();
+app.use(cors());
 
-app.use(cors())
-app.get('/', (req, res) => res.send('Server is running!'))
+// Add root route
+app.get('/', (req, res) => {
+    res.send('Trivia API Server is running!');
+});
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
+// API endpoint
+app.get('/api/questions', (req, res) => {
+    res.json(fakeData); // Send the fakeData object directly
+});
+
+
+app.listen(5000, () => console.log('Server running on port 5000'));
