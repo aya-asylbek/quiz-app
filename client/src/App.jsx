@@ -1,8 +1,9 @@
 import { useState } from "react";
 import GameSetup from "./components/GameSetup";
-
 import GamePlay from "./components/GamePlay";
 import GameResult from "./components/GameResult";
+import './App.css'; 
+
 
 function App() {
   const [gameStage, setGameStage] = useState("setup"); // "setup", "play", "result"
