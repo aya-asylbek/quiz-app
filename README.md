@@ -25,6 +25,7 @@ A dynamic and interactive quiz application built with **React** and powered by *
 
 ---
 
+
 ## 📦 Installation
 
 1️⃣ Clone the repository:
