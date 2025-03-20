@@ -56,9 +56,14 @@ button {
   width: 100%;
 }
 
+/* the hover color can be reviewed, it is hard to read 
+the options because the hover and the selection background blend together */
+
 button:hover {
   background-color: #481ac6;
 }
+
+
 
 
 

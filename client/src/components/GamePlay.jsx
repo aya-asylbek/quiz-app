@@ -18,6 +18,8 @@ function GamePlay({ gameData, endGame }) {
     }
   };
 
+  //it would be good to add feedback to the player regarding their score.
+  //A count following each question for the correct guess versus the wrong one.
   const question = gameData[currentIndex];
   const answers = [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5);
 
