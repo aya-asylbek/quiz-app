@@ -69,6 +69,9 @@ Feel free to modify it based on your project details! Let me know if you need an
 
 Fork the repository
 
+Clone it using 
+`git clone https://github.com/aya-asylbek/quiz-app.git`
+
 Create a new branch: git checkout -b feature-name
 
 Commit changes: git commit -m "Added new feature"
@@ -76,7 +79,6 @@ Commit changes: git commit -m "Added new feature"
 Push to branch: git push origin feature-name
 
 Create a Pull Request
-
 
 📜 License
 
