@@ -76,7 +76,7 @@ Commit changes: git commit -m "Added new feature"
 Push to branch: git push origin feature-name
 
 Create a Pull Request
-
+`git pull`
 
 📜 License
 
