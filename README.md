@@ -1,84 +1,105 @@
-# 🧠 Quiz App
+# Trivia Quiz Game 🎮
 
-A dynamic and interactive quiz application built with **React** and powered by **fetch API** for retrieving questions. This project demonstrates state management, API fetching, and unit testing using **Jest and React Testing Library**.
+A full-stack trivia game built with React (Vite), Node.js/Express, and PostgreSQL. Test your knowledge across various categories and compete on the leaderboard!
 
-## 🚀 Features
+[![React](https://img.shields.io/badge/React-19.0-blue)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-green)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-blue)](https://www.postgresql.org/)
 
-- 📝 Fetches quiz questions dynamically
-- 🎯 Multiple-choice questions with real-time feedback
-- ✅ Tracks correct and incorrect answers
-- 📊 Displays final score at the end
-- 🔄 Restart quiz option
-- 🛠️ Unit tests for core functionality
+## Features ✨
+- 🎯 10,000+ questions from [Open Trivia Database](https://opentdb.com/)
+- 🏆 Real-time score tracking and leaderboard
+- 🔧 Customizable game settings:
+  - Number of questions (1-50)
+  - Difficulty levels (Easy/Medium/Hard)
+  - Question types (Multiple Choice/True-False)
+  - 24+ categories
+- 📊 Persistent player stats in PostgreSQL
+- 🚀 Responsive UI with interactive elements
 
----
+## Installation 🛠️
 
-
----
-
-
-https://github.com/user-attachments/assets/f15aa7ad-a510-4f97-a156-92cd63ea76fd
-
-
-## 🛠️ Technologies Used
-
-- ⚛️ **React** - Frontend framework
-- 🌐 **Fetch API** - Retrieves quiz questions
-- 🎭 **Jest & React Testing Library** - Unit testing
-- 💅 **CSS** - Styling
-
----
+### Prerequisites
+- Node.js v20+
+- PostgreSQL v16+
+- npm v9+
 
 
-## 📦 Installation
 
-1️⃣ Clone the repository:
+## Getting Started 🚦
 
-```sh
-git clone https://github.com/your-username/quiz-app.git
+### 1. Clone the Repository
+```bash
+git clone https://github.com/aya-asylbek/quiz-app
+cd trivia-game
 
-cd quiz-app
-
-2️⃣ Install dependencies:
-
+### Client Setup
+```bash
+cd client
 npm install
 
-3️⃣ Start the development server:
+Server Setup
 
-npm start
-
-📝 How It Works
-
-The app fetches quiz questions using fetch().
-Questions are displayed with multiple-choice answers.
-User selects an answer, and feedback is shown instantly.
-At the end of the quiz, the final score is displayed.
-The user can restart the quiz.
-
-🚀 Deployment
-To deploy the app, simply install dependencies and run:
-
-
+cd server
 npm install
-npm start
+
+Configuration ⚙️
+Create .env file in /server:
+
+DB_HOST=localhost
+DB_USER=your_postgres_user
+DB_PASSWORD=your_postgres_password
+DB_NAME=trivia_game
+DB_PORT=5432
+PORT=3000
 
 
-🤝 Contributing
+Database Setup 🗄️
+Use pg_dump file 
 
-Feel free to modify it based on your project details! Let me know if you need any more changes. 🚀😊
+psql -U your_username -d trivia_game -f trivia_game_dump.sql
+
+Running the App 🚀
+Start Client
+
+cd client
+npm run dev
+
+Start Server
+
+cd server
+npm run dev
+
+
+App will be available at: http://localhost:5173
+
+
+Tech Stack 💻
+Component	Technology
+Frontend	React 19 + Vite
+Backend	Node.js + Express
+Database	PostgreSQL
+Testing	Vitest + React Testing Library
+Styling	CSS Modules
+API Integration	Open Trivia DB API
+Screenshots 📸
+Game Setup
+Gameplay
+Leaderboard
+
+Contributing 🤝
+Contributions welcome! Please:
 
 Fork the repository
 
-Create a new branch: git checkout -b feature-name
+Create your feature branch (git checkout -b feature/amazing-feature)
 
-Commit changes: git commit -m "Added new feature"
+Commit your changes (git commit -m 'Add amazing feature')
 
-Push to branch: git push origin feature-name
+Push to the branch (git push origin feature/amazing-feature)
 
-Create a Pull Request
+Open a Pull Request
 
-
-📜 License
-
-This project is licensed under the MIT License.
+License 📄
+MIT License - see LICENSE for details
 
