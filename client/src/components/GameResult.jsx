@@ -5,14 +5,14 @@ function GameResult({ score, restartGame, playerName }) {
 
   useEffect(() => {
     // Fetch the leaderboard from the backend (my server,js file )
-    fetch('http://localhost:3001/api/players')
+    fetch('http://localhost:3000/api/players')
       .then((response) => response.json())
       .then((data) => setLeaderboard(data))
       .catch((error) => console.error('Error fetching leaderboard:', error));
 
     // Save the score to the database Postgres - table players
     const saveScore = async () => {
-      const response = await fetch('http://localhost:3001/api/players', {
+      const response = await fetch('http://localhost:3000/api/players', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: playerName, score }),

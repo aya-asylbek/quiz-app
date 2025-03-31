@@ -1,66 +1,78 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 function GameSetup({ startGame }) {
-  const [amount, setAmount] = useState(5);
-  const [category, setCategory] = useState("");
-  const [difficulty, setDifficulty] = useState("medium");
-  const [type, setType] = useState("multiple");
-  const [categories, setCategories] = useState([]); // Store categories
+  const [playerName, setPlayerName] = useState('');
+  const [amount, setAmount] = useState(10); // Default number of questions
+  const [category, setCategory] = useState('9'); // Default category (General Knowledge)
+  const [difficulty, setDifficulty] = useState('easy');
+  const [type, setType] = useState('multiple');
+  const [categories, setCategories] = useState([]); // To store categories
 
-  // Fetch trivia categories from OpenTDB API
+  // Fetch categories from the OpenTDB API
   useEffect(() => {
-    fetch("https://opentdb.com/api_category.php")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.trivia_categories))
-      .catch((err) => console.error("Error fetching categories:", err));
+    fetch('https://opentdb.com/api_category.php')
+      .then((response) => response.json())
+      .then((data) => setCategories(data.trivia_categories)) // Store categories in state
+      .catch((error) => console.error('Error fetching categories:', error));
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    startGame({ amount, category, difficulty, type });
+  const handleStartGame = () => {
+    startGame({
+      playerName,
+      amount,
+      category,
+      difficulty,
+      type
+    });
   };
 
   return (
     <div>
       <h2>Trivia Game</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Number of Questions:
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-        </label>
-
-        {/* Category Dropdown */}
-        <label>
-          Category:
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="">Any Category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
+      <input
+        type="text"
+        placeholder="Enter your name"
+        value={playerName}
+        onChange={(e) => setPlayerName(e.target.value)}
+      />
+      <div>
+        <label>Amount of Questions</label>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Category</label>
+        <select onChange={(e) => setCategory(e.target.value)} value={category}>
+          {categories.length > 0 ? (
+            categories.map((categoryItem) => (
+              <option key={categoryItem.id} value={categoryItem.id}>
+                {categoryItem.name}
               </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Difficulty:
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </label>
-
-        <label>
-          Type:
-          <select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="multiple">Multiple Choice</option>
-            <option value="boolean">True/False</option>
-          </select>
-        </label>
-
-        <button type="submit">Start Game</button>
-      </form>
+            ))
+          ) : (
+            <option>Loading categories...</option>
+          )}
+        </select>
+      </div>
+      <div>
+        <label>Difficulty</label>
+        <select onChange={(e) => setDifficulty(e.target.value)} value={difficulty}>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div>
+        <label>Type</label>
+        <select onChange={(e) => setType(e.target.value)} value={type}>
+          <option value="multiple">Multiple Choice</option>
+          <option value="boolean">True/False</option>
+        </select>
+      </div>
+      <button onClick={handleStartGame}>Start Game</button>
     </div>
   );
 }
