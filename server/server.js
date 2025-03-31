@@ -20,7 +20,7 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
-// Existing questions endpoint
+// Fetching questions from opentdb website
 app.get('/api/questions', async (req, res) => {
   try {
     const { amount, category, difficulty, type } = req.query;
@@ -41,7 +41,37 @@ app.get('/api/questions', async (req, res) => {
   }
 });
 
-// Player endpoints using existing schema
+
+// Fetch all players
+app.get('/api/players', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM players');
+    res.json(rows);
+  } catch (error) {
+    console.error('DB Error:', error);
+    res.status(500).json({ error: 'Failed to fetch players' });
+  }
+});
+
+// Fetch a player by id 
+app.get('/api/players/:id', async (req, res) => {
+  try {
+    const { id } = req.params;  // Get player id from URL parameter
+    const { rows } = await pool.query('SELECT * FROM players WHERE id = $1', [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+
+    res.json(rows[0]);  // Return the player data
+  } catch (error) {
+    console.error('DB Error:', error);
+    res.status(500).json({ error: 'Failed to fetch player' });
+  }
+});
+
+
+// Adding a new player
 app.post('/api/players', async (req, res) => {
   try {
     const { name } = req.body;
@@ -56,6 +86,7 @@ app.post('/api/players', async (req, res) => {
   }
 });
 
+//Modifying or update  data of player
 app.put('/api/players/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,10 +102,41 @@ app.put('/api/players/:id', async (req, res) => {
   }
 });
 
+//deleting a player
+app.delete('/api/players/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rowCount } = await pool.query('DELETE FROM players WHERE id = $1 RETURNING *', [id]);
+
+    if (rowCount === 0) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+
+    res.json({ message: 'Player deleted successfully' });
+  } catch (error) {
+    console.error('DB Error:', error);
+    res.status(500).json({ error: 'Failed to delete player' });
+  }
+});
+
+//Getting a leaderboard using join sql command (players 1st table + leaderboard 2nd table)
 app.get('/api/leaderboard', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      'SELECT id, name, score FROM players ORDER BY score DESC LIMIT 10'
+      `SELECT 
+        players.id, 
+        players.name, 
+        leaderboard.score, 
+        leaderboard.rank
+      FROM 
+        players
+      JOIN 
+        leaderboard 
+      ON 
+        players.id = leaderboard.player_id
+      ORDER BY 
+        leaderboard.score DESC
+      LIMIT 10`
     );
     res.json(rows);
   } catch (error) {
@@ -83,7 +145,8 @@ app.get('/api/leaderboard', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3002;
+
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Connected to database: ${process.env.DB_NAME}`);
