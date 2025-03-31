@@ -2,23 +2,42 @@ import React, { useState, useEffect } from 'react';
 
 function GameSetup({ startGame }) {
   const [playerName, setPlayerName] = useState('');
-  const [amount, setAmount] = useState(10); // Default number of questions
-  const [category, setCategory] = useState('9'); // Default category (General Knowledge)
+  const [amount, setAmount] = useState(10);
+  const [category, setCategory] = useState('9');
   const [difficulty, setDifficulty] = useState('easy');
   const [type, setType] = useState('multiple');
-  const [categories, setCategories] = useState([]); // To store categories
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch categories from the OpenTDB API
   useEffect(() => {
     fetch('https://opentdb.com/api_category.php')
       .then((response) => response.json())
-      .then((data) => setCategories(data.trivia_categories)) // Store categories in state
-      .catch((error) => console.error('Error fetching categories:', error));
+      .then((data) => {
+        setCategories(data.trivia_categories);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+        setLoading(false);
+      });
   }, []);
 
-  const handleStartGame = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const trimmedName = playerName.trim();
+
+    if (!trimmedName) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    if (amount < 1 || amount > 50) {
+      alert("Please enter a number between 1 and 50 for questions.");
+      return;
+    }
+
     startGame({
-      playerName,
+      name: trimmedName,
       amount,
       category,
       difficulty,
@@ -27,53 +46,85 @@ function GameSetup({ startGame }) {
   };
 
   return (
-    <div>
-      <h2>Trivia Game</h2>
-      <input
-        type="text"
-        placeholder="Enter your name"
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-      />
-      <div>
-        <label>Amount of Questions</label>
+    <form onSubmit={handleSubmit} className="game-setup">
+      <h2>Trivia Game Setup</h2>
+      
+      <div className="form-group">
+        <label htmlFor="playerName">Your Name:</label>
         <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          id="playerName"
+          type="text"
+          placeholder="Enter your name"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+          required
+          minLength="2"
+          maxLength="30"
         />
       </div>
-      <div>
-        <label>Category</label>
-        <select onChange={(e) => setCategory(e.target.value)} value={category}>
-          {categories.length > 0 ? (
+
+      <div className="form-group">
+        <label htmlFor="amount">Number of Questions:</label>
+        <input
+          id="amount"
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(Math.max(1, Math.min(50, e.target.value)))}
+          min="1"
+          max="50"
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="category">Category:</label>
+        <select 
+          id="category"
+          value={category} 
+          onChange={(e) => setCategory(e.target.value)}
+          disabled={loading}
+        >
+          {loading ? (
+            <option>Loading categories...</option>
+          ) : (
             categories.map((categoryItem) => (
               <option key={categoryItem.id} value={categoryItem.id}>
                 {categoryItem.name}
               </option>
             ))
-          ) : (
-            <option>Loading categories...</option>
           )}
         </select>
       </div>
-      <div>
-        <label>Difficulty</label>
-        <select onChange={(e) => setDifficulty(e.target.value)} value={difficulty}>
+
+      <div className="form-group">
+        <label htmlFor="difficulty">Difficulty:</label>
+        <select 
+          id="difficulty"
+          value={difficulty} 
+          onChange={(e) => setDifficulty(e.target.value)}
+        >
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
         </select>
       </div>
-      <div>
-        <label>Type</label>
-        <select onChange={(e) => setType(e.target.value)} value={type}>
+
+      <div className="form-group">
+        <label htmlFor="type">Question Type:</label>
+        <select 
+          id="type"
+          value={type} 
+          onChange={(e) => setType(e.target.value)}
+        >
           <option value="multiple">Multiple Choice</option>
           <option value="boolean">True/False</option>
         </select>
       </div>
-      <button onClick={handleStartGame}>Start Game</button>
-    </div>
+
+      <button type="submit" className="start-button">
+        Start Game
+      </button>
+    </form>
   );
 }
 

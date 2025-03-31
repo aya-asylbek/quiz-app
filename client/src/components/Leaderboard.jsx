@@ -11,7 +11,7 @@ export default function Leaderboard() {
 
   return (
     <div className="leaderboard">
-      <h3>Top Scores</h3>
+      <h3>Top 10 Scores</h3>
       <ol>
         {scores.map((player, index) => (
           <li key={player.id}>

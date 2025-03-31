@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import GameSetup from './components/GameSetup';
 import GamePlay from './components/GamePlay';   
 import GameResult from './components/GameResult';  
+import Leaderboard from './components/Leaderboard';
 import './App.css';
-
 
 function App() {
   const [gameStage, setGameStage] = useState("setup");
@@ -11,22 +11,36 @@ function App() {
   const [gameData, setGameData] = useState(null);
   const [score, setScore] = useState(0);
   const [playerId, setPlayerId] = useState(null);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
-  // New: Create player when game starts 
   const startGame = async (settings) => {
     try {
+      const { name, amount, category, difficulty, type } = settings;
+      
+      // Validating name
+      if (!name?.trim()) {
+        alert("Please enter a valid player name.");
+        return;
+      }
+
       // Create player
       const playerResponse = await fetch('http://localhost:3000/api/players', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: settings.playerName })
+        body: JSON.stringify({ name: name.trim() })
       });
+
+      if (!playerResponse.ok) {
+        const error = await playerResponse.json();
+        throw new Error(error.error || "Failed to create player");
+      }
+
       const playerData = await playerResponse.json();
       setPlayerId(playerData.id);
 
-      // Fetch questions from backend
+      // Fetch questions
       const questionsResponse = await fetch(
-        `http://localhost:3000/api/questions?amount=${settings.amount}&category=${settings.category}&difficulty=${settings.difficulty}&type=${settings.type}`
+        `http://localhost:3000/api/questions?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`
       );
       const questionsData = await questionsResponse.json();
       
@@ -34,14 +48,14 @@ function App() {
       setGameData(questionsData.results);
       setGameStage("play");
     } catch (error) {
-      console.error('Game start failed:', error);
+      console.error('Game start failed:', error.message);
+      alert(error.message);
     }
   };
 
-  // Save score when game ends
   const endGame = async (finalScore) => {
     try {
-      await fetch(`http://localhost:3000/api/players/${playerId}/score`, {
+      await fetch(`http://localhost:3000/api/players/${playerId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ score: finalScore })
@@ -50,10 +64,10 @@ function App() {
       setGameStage("result");
     } catch (error) {
       console.error('Score save failed:', error);
+      alert('Failed to save score. Please try again.');
     }
   };
 
-  // Restart game
   const restartGame = () => {
     setGameStage("setup");
     setGameSettings(null);
@@ -62,17 +76,24 @@ function App() {
     setPlayerId(null);
   };
 
-  // Add to return statement
+  const toggleLeaderboard = () => setShowLeaderboard(!showLeaderboard);
+
   return (
     <div>
       {gameStage === "setup" && <GameSetup startGame={startGame} />}
       {gameStage === "play" && <GamePlay gameData={gameData} endGame={endGame} />}
       {gameStage === "result" && (
-        <GameResult 
-          score={score} 
-          restartGame={restartGame} 
-          playerId={playerId}
-        />
+        <>
+          <GameResult 
+            score={score} 
+            restartGame={restartGame} 
+            playerId={playerId}
+          />
+          <button onClick={toggleLeaderboard}>
+            {showLeaderboard ? 'Hide Leaderboard' : 'Show Leaderboard'}
+          </button>
+          {showLeaderboard && <Leaderboard />}
+        </>
       )}
     </div>
   );

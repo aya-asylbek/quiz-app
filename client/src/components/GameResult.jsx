@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react';
 
-function GameResult({ score, restartGame, playerName }) {
+function GameResult({ score, restartGame, playerId }) {
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     // Fetch the leaderboard from the backend (my server,js file )
-    fetch('http://localhost:3000/api/players')
+    fetch('http://localhost:3000/api/leaderboard')
       .then((response) => response.json())
       .then((data) => setLeaderboard(data))
       .catch((error) => console.error('Error fetching leaderboard:', error));
 
     // Save the score to the database Postgres - table players
-    const saveScore = async () => {
-      const response = await fetch('http://localhost:3000/api/players', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: playerName, score }),
-      });
-      const data = await response.json();
-      console.log(data.message);
+    const updateScore = async () => {
+      try {
+        await fetch(`http://localhost:3000/api/players/${playerId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ score })
+        });
+      } catch (error) {
+        console.error('Score update failed:', error);
+      }
     };
-    saveScore();
-  }, [score, playerName]);
+    
+    if (playerId) updateScore();
+  }, [score, playerId]);
+  
 
   return (
     <div>

@@ -69,13 +69,17 @@ app.get('/api/players/:id', async (req, res) => {
   }
 });
 
-// Adding a new player
+// Add new player
 app.post('/api/players', async (req, res) => {
   try {
     const { name } = req.body;
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+      return res.status(400).json({ error: "Player name is required" });
+    }
+
     const { rows } = await pool.query(
       'INSERT INTO players (name, score) VALUES ($1, 0) RETURNING *',
-      [name]
+      [name.trim()]
     );
     res.json(rows[0]);
   } catch (error) {
@@ -84,23 +88,21 @@ app.post('/api/players', async (req, res) => {
   }
 });
 
-// Update player's score
+// Update player score
 app.put('/api/players/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { score } = req.body;
-
-    console.log(`Updating player with ID: ${id}, New Score: ${score}`);
-
+    
     const { rows } = await pool.query(
       'UPDATE players SET score = $1 WHERE id = $2 RETURNING *',
       [score, id]
     );
-
+    
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Player not found' });
     }
-
+    
     res.json(rows[0]);
   } catch (error) {
     console.error('DB Error:', error);
@@ -108,8 +110,7 @@ app.put('/api/players/:id', async (req, res) => {
   }
 });
 
-
-// Delete a player
+// Delete player
 app.delete('/api/players/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -134,7 +135,7 @@ app.get('/api/leaderboard', async (req, res) => {
         id, 
         name, 
         score, 
-        RANK() OVER (ORDER BY score DESC) AS rank
+        ROW_NUMBER() OVER (ORDER BY score DESC) AS rank
       FROM 
         players
       ORDER BY 
@@ -153,4 +154,8 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Connected to database: ${process.env.DB_NAME}`);
 });
+
+
+
+
 
