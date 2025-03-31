@@ -17,6 +17,10 @@ A full-stack trivia game built with React (Vite), Node.js/Express, and PostgreSQ
 - 📊 Persistent player stats in PostgreSQL
 - 🚀 Responsive UI with interactive elements
 
+
+https://github.com/user-attachments/assets/20b5f7d7-7dd9-4b71-9ff2-e5a15187daf2
+
+
 ## Installation 🛠️
 
 ### Prerequisites
