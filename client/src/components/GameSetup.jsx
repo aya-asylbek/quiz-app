@@ -47,7 +47,7 @@ function GameSetup({ startGame }) {
 
   return (
     <form onSubmit={handleSubmit} className="game-setup">
-      <h2>Trivia Game Setup</h2>
+      <h2>Trivia Game </h2>
       
       <div className="form-group">
         <label htmlFor="playerName">Your Name:</label>
